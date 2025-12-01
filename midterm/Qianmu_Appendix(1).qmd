@@ -1,0 +1,626 @@
+---
+title: "Philadelphia Housing Model - Technical Appendix"
+author: "Your Name"
+format: 
+  html:
+    code-fold: show
+    toc: true
+    toc-location: left
+    theme: cosmo
+---
+
+### Phase 1: Data Preparation (Technical Appendix)
+
+**Load and clean Philadelphia sales data:**
+
+- Filter to residential properties, 2023-2024 sales
+- Remove obvious errors
+- Handle missing values
+- Document all cleaning decisions
+
+```{r load and clean sales data}
+
+library(sf)
+library(tigris)
+library(tidycensus)
+
+url <- "https://phl.carto.com/api/v2/sql?filename=opa_properties_public&format=geojson&skipfields=cartodb_id&q=SELECT+*+FROM+opa_properties_public"
+
+property_data <- st_read(url)
+
+
+```
+
+```{r}
+View(property_data)
+```
+
+```{r}
+library(dplyr)
+library(stringr)
+
+# Clean data
+# date
+property_data <- property_data %>%
+mutate(sale_date = as.Date(sale_date))
+
+# filter: residental+ 2023–2024
+property_data_clean <- property_data %>%
+  filter(
+    category_code_description %in% c("SINGLE FAMILY", "MULTI FAMILY", "APARTMENTS > 4 UNITS"),
+    sale_date >= as.Date("2023-01-01"),
+    sale_date <= as.Date("2024-12-31")
+  )
+
+```
+
+```{r}
+# deal with error and N/A
+
+property_data_clean <- property_data_clean %>%
+filter(sale_price > 0 & sale_price < 2000000)
+
+property_data_clean <- property_data_clean %>%
+filter(!is.na(sale_price), !is.na(total_livable_area), !is.na(year_built))
+
+```
+
+
+```{r}
+property_data_clean %>%
+  st_drop_geometry() %>%
+  summarise(records_after_filter = n())
+```
+
+
+```{r}
+colnames(property_data_clean)
+```
+```{r}
+unique(property_data$category_code_description)
+```
+```{r}
+View(property_data_clean)
+```
+
+```{r}
+unique(property_data$sale_price)
+```
+
+
+
+**Load secondary data:**
+
+- Census data (tidycensus):
+- Spatial amenities (OpenDataPhilly)
+- Join to sales data appropriately
+- Make sure you have the correct CRS!
+
+```{r load and clean census and spatial data}
+#census data
+
+library(tidycensus)
+library(dplyr)
+library(sf)
+
+census_api_key("940dffa67b928a0518accaf8839aa7b4762b11ab")
+
+philly_census <- get_acs(
+  geography = "tract",
+  state = "PA",
+  county = "Philadelphia",
+  variables = c(
+    median_income = "B19013_001",
+    bachelor = "B15003_022",
+    edu_total = "B15003_001",
+    poverty = "B17001_002",
+    poverty_total = "B17001_001"
+  ),
+  geometry = TRUE
+)
+
+head(philly_census)
+
+```
+```{r}
+#input spatial data
+
+library(sf)
+library(dplyr)
+
+
+data_dir <- "/Users/cathy/GitHub/portfolio-setup-uxiaoo22/midterm"
+
+parks_path <- file.path(data_dir, "PPR_Properties.geojson")
+crime_path <- file.path(data_dir, "incidents_part1_part2.shp")
+
+
+parks <- st_read(parks_path)
+crime <- st_read(crime_path)
+
+
+st_crs(parks)
+st_crs(crime)
+st_crs(property_data_clean)
+
+```
+```{r}
+library(ggplot2)
+library(sf)
+
+
+ggplot() +
+geom_sf(data = parks, fill = "forestgreen", color = "darkgreen", alpha = 0.6) +
+labs(
+title = "Philadelphia Parks (PPR_Properties.geojson)",
+subtitle = "City parks and recreation properties",
+caption = "Data source: Philadelphia Department of Parks and Recreation"
+) +
+theme_minimal()
+
+```
+```{r}
+
+ggplot() +
+geom_sf(data = crime, color = "red", size = 0.2, alpha = 0.4) +
+labs(
+title = "Philadelphia Crime Incidents (crime_incidents.geojson)",
+subtitle = "Part I & II incidents across the city",
+caption = "Data source: Philadelphia Police Department"
+) +
+theme_minimal()
+
+```
+
+
+**Deliverable (Appendix only):**
+
+- Complete data cleaning code
+- Summary tables showing before/after dimensions
+- Narrative explaining decisions
+
+
+
+### Phase 2: Exploratory Data Analysis
+
+**Create at least 5 professional visualizations:**
+
+1. Distribution of sale prices (histogram)
+2. Geographic distribution (map)
+3. Price vs. structural features (scatter plots)
+4. Price vs. spatial features (scatter plots)
+5. One creative visualization
+
+**For appendix:** Include all visualizations with detailed interpretations
+```{r five professional visualizations}
+
+
+
+
+
+
+```
+
+### Phase 3: Feature Engineering (Technical Appendix)
+
+**Create spatial features: (these are examples below, but how you construct your model is up to your team)**
+
+1. **Buffer-based features**:
+
+   - Parks within 500ft, 1000ft
+   - Transit stops within 400ft
+   - Schools, crime, etc.
+
+2. **k-Nearest Neighbor features**:
+
+   - Average distance to k nearest parks, transit, etc.
+
+3. **Census variables**:
+
+   - Join median income, education, poverty, etc.
+
+4. **Interaction terms**:
+
+   - Theoretically motivated combinations
+
+**Deliverable (Appendix only):**
+
+- All feature engineering code
+- Summary table of features created
+- Brief justification for each feature
+
+```{r feature engineering and summary table}
+# CRS transformation
+property_data_clean <- st_transform(property_data_clean, 26918)
+parks <- st_transform(parks, 26918)
+crime <- st_transform(crime, 26918)
+
+```
+
+```{r}
+library(sf)
+library(dplyr)
+
+# park
+
+property_data_clean$dist_to_park <- st_distance(property_data_clean, parks) %>%
+apply(1, min)
+
+
+summary(property_data_clean$dist_to_park)
+
+# crime
+
+property_buffers <- st_buffer(property_data_clean, 500)
+
+crime_count <- st_join(property_buffers, crime, join = st_intersects) %>%
+st_drop_geometry() %>%
+group_by(parcel_number) %>% 
+summarize(crime_count_500m = n())
+
+
+property_data_clean <- property_data_clean %>%
+left_join(crime_count, by = "parcel_number")
+
+
+summary(property_data_clean$crime_count_500m)
+head(property_data_clean %>%
+st_drop_geometry() %>%
+select(parcel_number, dist_to_park, crime_count_500m))
+
+```
+
+```{r}
+philly_census_wide <- philly_census %>%
+  select(GEOID, variable, estimate) %>%
+  tidyr::pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(
+    edu_rate = bachelor / edu_total,
+    poverty_rate = poverty / poverty_total
+  ) %>%
+  rename(median_income = median_income)
+
+```
+
+```{r}
+philly_census_wide <- st_transform(philly_census_wide, st_crs(property_data_clean))
+```
+
+```{r}
+# census data spatial join
+property_data_census <- st_join(
+  property_data_clean,
+  philly_census_wide[, c("GEOID", "median_income", "edu_rate", "poverty_rate")]
+)
+
+head(property_data_census %>% 
+       st_drop_geometry() %>% 
+       select(parcel_number, median_income, edu_rate, poverty_rate))
+
+```
+
+```{r}
+# property data
+property_data_ready <- property_data_clean %>%
+  
+  mutate(
+    year_built = as.numeric(year_built),
+    house_age = 2025 - year_built
+  ) %>%
+
+  select(
+    parcel_number,
+    total_livable_area,
+    number_of_bedrooms,
+    house_age,
+    garage_spaces
+  ) %>%
+  
+  filter(
+    !if_any(everything(), is.na)
+  )
+
+```
+
+```{r}
+View(property_data_ready)
+```
+
+```{r}
+View(property_data_census)
+```
+
+
+**Justification:**
+
+
+---
+### Phase 4: Model Building
+
+**Build models progressively: (for example)**
+
+1. Structural features only
+2. + Census variables
+3. + Spatial features
+4. + Interactions and fixed effects
+
+**For appendix:**
+
+- Complete model code
+- Full stargazer/modelsummary output
+- Coefficient interpretations
+
+```{r}
+
+property_spatial <- property_data_clean %>%
+  st_drop_geometry() %>%
+  select(parcel_number, sale_price, dist_to_park, crime_count_500m)
+
+model_data <- property_data_ready %>%
+  left_join(property_spatial, by = "parcel_number")
+
+model_data_final <- model_data %>%
+  left_join(
+    property_data_census %>%
+      st_drop_geometry() %>%
+      select(parcel_number, median_income, edu_rate, poverty_rate),
+    by = "parcel_number"
+  )
+
+model_data_final <- model_data_final %>%
+  filter(
+    sale_price >= 10000,
+    house_age <= 1000,
+    !if_any(everything(), is.na)
+  )
+
+summary(model_data_final)
+nrow(model_data_final)
+head(model_data_final)
+
+```
+```{r}
+View(model_data_final)
+```
+
+```{r}
+model_data_final <- model_data_final %>%
+  mutate(log_price = log(sale_price))
+
+model_1 <- lm(
+  log_price ~ total_livable_area + number_of_bedrooms + house_age + garage_spaces+
+    dist_to_park + crime_count_500m +
+    median_income + edu_rate + poverty_rate,
+  data = model_data_final
+)
+
+summary(model_1)
+```
+```{r}
+library(ggplot2)
+
+# residual scatter plot
+model_data_final <- model_data_final %>%
+  mutate(
+    fitted = fitted(model_1),
+    residuals = resid(model_1)
+  )
+
+
+ggplot(model_data_final, aes(x = fitted, y = residuals)) +
+  geom_point(alpha = 0.4, color = "steelblue") +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    title = "Residuals vs Fitted Values",
+    x = "Fitted Values (Predicted log Price)",
+    y = "Residuals"
+  ) +
+  theme_minimal()
+```
+```{r}
+model_2 <- lm(
+  log_price ~ log(total_livable_area + 1) + 
+               log(crime_count_500m + 1) +
+               log(median_income + 1) +
+               log(edu_rate + 1) + number_of_bedrooms + house_age + garage_spaces+  
+               poverty_rate,
+  data = model_data_final
+)
+summary(model_2)
+
+```
+```{r}
+library(ggplot2)
+
+# residual scatter plot
+model_data_final <- model_data_final %>%
+  mutate(
+    fitted = fitted(model_2),
+    residuals = resid(model_2)
+  )
+
+
+ggplot(model_data_final, aes(x = fitted, y = residuals)) +
+  geom_point(alpha = 0.4, color = "steelblue") +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    title = "Residuals vs Fitted Values",
+    x = "Fitted Values (Predicted log Price)",
+    y = "Residuals"
+  ) +
+  theme_minimal()
+```
+```{r}
+install.packages(c("lmtest", "sandwich"))
+library(lmtest)
+library(sandwich)
+
+# 使用 HC1 类型的稳健标准误（White’s heteroskedasticity-consistent）
+coeftest(model_2, vcov = vcovHC(model_1, type = "HC1"))
+
+```
+
+
+```{r}
+library(dplyr)
+
+# 1️⃣ 对取对数的变量预先处理：加1或最小正数偏移，避免 log(0)
+model_data_final <- model_data_final %>%
+  mutate(
+    log_price = log(sale_price),
+    log_area = log(total_livable_area + 1),      # 避免0
+    log_dist_park = log(dist_to_park + 1),
+    log_poverty = log(poverty_rate + 1e-6)       # 有些贫困率为0时补小值
+  ) %>%
+  # 删除含有NA或非数值的行
+  filter(!if_any(c(log_price, log_area, number_of_bedrooms, house_age, garage_spaces,
+                   log_dist_park, crime_count_500m, median_income, edu_rate, log_poverty),
+                 ~ is.na(.)))
+
+# 2️⃣ 建立回归模型（使用清洗后的变量名）
+model_1 <- lm(
+  log_price ~ log_area + number_of_bedrooms + house_age + garage_spaces +
+    log_dist_park + crime_count_500m +
+    median_income + edu_rate + log_poverty,
+  data = model_data_final
+)
+
+# 3️⃣ 输出结果
+summary(model_1)
+
+```
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(sf)
+
+# 去掉 geometry 列
+vars_to_plot <- model_data_final %>%
+  st_drop_geometry() %>%   # ✅ 删除地理信息列
+  select(
+    total_livable_area,
+    number_of_bedrooms,
+    house_age,
+    garage_spaces,
+    dist_to_park,
+    crime_count_500m,
+    median_income,
+    edu_rate,
+    poverty_rate
+  )
+
+# 转成长表格格式
+vars_long <- vars_to_plot %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "value")
+
+# 绘图
+ggplot(vars_long, aes(x = value)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  facet_wrap(~ variable, scales = "free", ncol = 3) +
+  theme_minimal(base_size = 12) +
+  labs(
+    title = "Distributions of Variables Used in the Regression Model",
+    x = "Value",
+    y = "Frequency"
+  )
+
+
+```
+
+
+```{r model builder code and summary}
+
+model_data_final <- model_data_final %>%
+  mutate(log_price = log(sale_price))
+
+model_final <- lm(
+  log_price ~ total_livable_area + number_of_bedrooms + house_age + garage_spaces +
+    dist_to_park + crime_count_500m +
+    median_income + edu_rate + poverty_rate,
+  data = model_data_final
+)
+
+summary(model_final)
+
+```
+
+***Coefficient interpretations:***
+---
+
+### Phase 5: Model Validation
+
+**Use 10-fold cross-validation:**
+- Compare all 4 models
+- Report RMSE, MAE, R² for each
+- Create predicted vs. actual plot
+
+**For appendix:** 
+
+- Complete CV code
+- Detailed results
+- Predicted vs. actual scatter plot
+- Discussion of which features matter most
+
+```{r 10-fold cross-validation with scatter plots}
+
+
+
+
+
+
+```
+
+**Discuss which features matter the most:**
+
+
+---
+### Phase 6: Model Diagnostics (Technical Appendix Only)
+
+**Check assumptions for best model:**
+
+- Residual plot (linearity, homoscedasticity)
+- Q-Q plot (normality)
+- Cook's distance (influential observations)
+
+**Deliverable (Appendix only):**
+
+- All 3 diagnostic plots
+- Interpretation of each
+- How you addressed violations (if any)
+
+```{r residual plot, q-q plot, and cooks distance}
+
+
+
+
+
+
+```
+
+**Interpretation of plots and 
+### Phase 7: Conclusions & Recommendations
+
+**Answer these questions:**
+
+1. What is your final model's accuracy?
+2. Which features matter most for Philadelphia prices?
+3. Which neighborhoods are hardest to predict?
+4. Equity concerns?
+5. Limitations?
+
+
+**For appendix:** 2-3 paragraphs with detailed discussion
+
+```{r}
+
+
+
+
+
+
+```
+
+**2-3 Paragraphs:**

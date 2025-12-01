@@ -1,0 +1,193 @@
+---
+title: "Xiao Yu - Week 7 Notes: Model Diagnostics & Spatial Autocorrelation"
+date: "2025-10-20"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+---
+
+# Limitations of Linear Models
+
+## What Does a Basic Linear Model Ignore?
+- **Location variation** (North End vs. Roxbury vs. Back Bay)
+- Proximity to:
+  - Downtown
+  - Waterfronts
+  - Parks
+- Neighborhood conditions:
+  - Crime rates
+  - School quality
+  - Socioeconomic characteristics
+
+::: callout-important
+**Location matters!**  
+A house’s price is determined not only by its physical attributes but by where it is located.
+:::
+
+## Why Might It Fail?
+- 1,000 sq ft in **Back Bay ≠ Roxbury**
+- Same attributes, very different prices
+- Real estate adheres to the principle: **“Location, location, location!”**
+
+## How Can We Improve the Model?
+- Add **spatial features**
+- Use **neighborhood fixed effects**
+- Include **interaction terms** to reflect how variables behave differently across places
+
+> 💡 *Key idea:* Spatial features allow regression models to capture real-world geography.
+
+---
+
+# Converting Data into Spatial Format
+
+### Step 1: Create Spatial Data
+Convert tabular data with latitude/longitude into an `sf` object.
+
+### Step 2: Spatial Join
+Match each property to its neighborhood polygon.
+
+---
+
+# Types of Variables
+
+| Variable Type      | Examples |
+|--------------------|----------|
+| **Continuous**     | House size, Age, Income, Distance to CBD |
+| **Categorical**    | Neighborhood, School district, Building type |
+| **Binary**         | Has garage (Yes/No), Historic status (Yes/No) |
+
+---
+
+# Understanding Interaction Effects
+
+### What Is an Interaction?
+> The effect of one variable depends on the value of another variable.
+
+### Example Questions:
+- Does square footage increase price *more* in wealthy neighborhoods?
+- Does pollution affect older people differently than younger people?
+
+---
+
+# Policy Implications (Boston Case Study)
+
+## 1. Market Segmentation
+Boston operates as two distinct housing markets:
+- **Luxury market:** ~$1081/sq ft
+- **Standard market:** ~$96/sq ft
+
+## 2. Affordability Crisis
+- Interaction effects **amplify inequality**
+- Larger homes in wealthy areas become disproportionately expensive
+
+## 3. Policy Design Implications
+- Property taxes should reflect spatial variation
+- Housing policy must be neighborhood-specific (not one-size-fits-all)
+
+---
+
+# When *Not* to Use Interaction Terms
+- **Small sample sizes**
+- **Risk of overfitting**
+- **Model instability**
+
+---
+
+# Detecting Non-Linearity
+
+**Signs:**
+- Curved residual plots
+- Diminishing returns
+- U-shaped patterns
+- Theoretical justification
+
+### Examples:
+- House age: depreciation → trough → historic premium
+- Advertising: diminishing returns
+- Crime prevention: early gains then plateau
+
+---
+
+# U-Shaped Age Effect: Theory
+
+### Housing Lifecycle Stages
+
+| Stage | Description | Price Effect |
+|-------|-------------|--------------|
+| **New (0–20 yrs)** | Modern amenities, no repairs | High value, initial depreciation |
+| **Mid-aged (20–80 yrs)** | Maintenance required | Lowest value |
+| **Historic (80+ yrs)** | Vintage architecture, prestige | Rising value (vintage premium) |
+
+
+# Tobler’s First Law of Geography
+> “Everything is related to everything else, but near things are more related than distant things.”
+
+## What This Means for Housing Prices
+- **Crime in nearby streets** influences a property's value more than crime occurring far away.
+- **Proximity to parks and green space** increases property desirability.
+- **Immediate neighborhood conditions** largely define the housing market segment a property belongs to.
+
+::: callout-note
+Spatial relationship matters because households make decisions based on their *local* context, not the entire city.
+:::
+
+---
+
+# Three Approaches to Spatial Features
+
+### 1️⃣ Buffer Aggregation
+- Counts or sums events (e.g., number of crimes, schools) within a specified radius of the property.
+- Useful for modeling *local exposure*.
+
+### 2️⃣ k-Nearest Neighbors (kNN)
+- Calculates average distance to the *k closest* amenities or hazards.
+- Focuses on relative proximity instead of fixed boundaries.
+
+### 3️⃣ Distance to Specific Points
+- Computes straight-line (Euclidean) or network distance to specific features:
+  - Central Business District (CBD)
+  - Nearest park
+  - Public transport station
+
+::: callout-tip
+These spatial variables can be directly added to regression models to capture geographic influences.
+:::
+
+---
+
+# What Are Fixed Effects?
+
+**Fixed Effects** are categorical variables representing groups (such as neighborhoods, districts, or cities) that absorb:
+- Social characteristics
+- Historical development patterns
+- Cultural differences
+- Policy environments
+
+They allow the model to:
+- Compare properties **within the same group**
+- Control for unobserved heterogeneity **between groups**
+
+> ✅ Example: Adding a “Neighborhood Fixed Effect” variable assigns a unique dummy for each neighborhood to control for location-specific influence.
+
+---
+
+# Cross-Validation (CV) Recap
+
+## Three Common Validation Approaches
+
+| Method            | Description | Advantages | Limitations |
+|------------------|-------------|------------|-------------|
+| **Train/Test Split** | Split data into 80% training, 20% testing | Simple and fast | Results depend heavily on single split (unstable) |
+| **k-Fold CV**     | Divide into *k* subsets; rotate test and train sets | More reliable performance estimate | More computation |
+| **LOOCV** (Leave-One-Out) | Special case of k-fold CV with k = n | Uses almost all data for training | Extremely slow for large datasets |
+
+## Why Use Cross-Validation?
+- Measures how well the model predicts **new, unseen data**
+- More objective than in-sample \( R^2 \)
+- Helps detect **overfitting** by testing generalizability
+
+::: callout-important
+Cross-validation ensures your model performs well in real-world scenarios, not just on the training dataset.
+:::
