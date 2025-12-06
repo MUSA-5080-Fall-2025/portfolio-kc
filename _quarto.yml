@@ -43,11 +43,14 @@ website:
           - href: Assignments/Midterm/final_slides.qmd
             text: "Midterm Slides"
           - href: Assignments/Assignment_4/Yu_Xiao_Assignment4.qmd
-            text: "Assignment 4"
+            text: "Assignment 4: Spatial Predictive Analysis of Burglaries in Chicago"
           - href: Assignments/Assignment_5/Yu_Zheng_Assignment5.qmd
             text: "Assignment 5: Space-Time Prediction of Bike Share Demand: Philadelphia Indego"
           - href: Assignments/Final/1.qmd
             text: "Final Challenge"
+          - href: Assignments/Final/fslides.qmd
+            text: "Final Slides"
+            
             
    
             
