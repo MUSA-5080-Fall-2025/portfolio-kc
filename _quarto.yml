@@ -30,7 +30,7 @@ website:
           - href: labs/lab0/script/lab0_template.qmd
             text: "Lab 0: dplyr Basics"
           - href: labs/lab1/week-03/script/week3_lab_exercise.qmd
-            text: "Lab 1"
+            text: "Lab 1: Data Visualization and EDA"
             
       - text: "Assignments"
         menu:
