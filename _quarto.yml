@@ -38,10 +38,14 @@ website:
             text: "Assignment 1: Census Data Exploration"
           - href: Assignments/Assignment_2/Yu_Xiao_Assignment2.qmd
             text: "Assignment 2: Spatial Analysis and Visualization"
-          - href: Assignments/Yu_Xiao_Appendix.qmd
+          - href: Assignments/Midterm/Yu_Xiao_Appendix.qmd
             text: "Midterm"
+          - href: Assignments/Assignment_4/Yu_Xiao_Assignment4.qmd
+            text: "Assignment 4"
           - href: Assignments/Assignment_5/Yu_Zheng_Assignment5.qmd
-            text: "Assignment 5"
+            text: "Assignment 5:Space-Time Prediction of Bike Share Demand: Philadelphia Indego"
+          - href: Assignments/Final/1.qmd
+            text: "Midterm"
             
    
             
