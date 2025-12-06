@@ -13,25 +13,45 @@ website:
           - href: weekly-notes/
             text: "All Notes"
           - href: weekly-notes/week-01-notes.qmd
-            text: "Week 1 Notes"
+            text: "Week 1: Introduction to R and dplyr"
           - href: weekly-notes/week-02-notes.qmd
-            text: "Week 2 Notes"
+            text: "Week 2: Algorithmic Decision Making & The Census"
           - href: weekly-notes/week-03-notes.qmd
-            text: "Week 3 Notes"
+            text: "Week 3: EDA and Visualization"
           - href: weekly-notes/week-04-notes.qmd
-            text: "Week 4 Notes"
+            text: "Week 4: GIS & Spatial Analysis in R"
           - href: weekly-notes/week-05-notes.qmd
-            text: "Week 5 Notes"
+            text: "Week 5: Intro to Predictive Modeling with Linear Regression"
           - href: weekly-notes/week-06-notes.qmd
-            text: "Week 6 Notes"
+            text: "Week 6: Spatial Machine Learning - Linear Regression Cont"
           - href: weekly-notes/week-07-notes.qmd
-            text: "Week 7 Notes"
+            text: "Week 7: Spatial Machine Learning - Spatial Autocorrelation"
+          - href: weekly-notes/week-07-notes.qmd
+            text: "Week 9: Predictive Policing, Dirty Data, and Count Regression"
+          - href: weekly-notes/week-07-notes.qmd
+            text: "Week 10: Logistic Regression - The case of recidivism"
+          - href: weekly-notes/week-07-notes.qmd
+            text: "Week 11: Space-Time Modeling: Predicting Bike Share"
+          - href: weekly-notes/week-07-notes.qmd
+            text: "Week 12: K-means and Sequence Analysis for Neighborhood Change"
       - text: "Labs"
         menu:
           - href: labs/lab0/script/lab0_template.qmd
             text: "Lab 0: dplyr Basics"
           - href: labs/lab1/week-03/script/week3_lab_exercise.qmd
-            text: "Lab 1: Data Visualization and EDA"
+            text: "Lab 1: Evaluating Data Reliability for Algorithmic Decision-Making"
+          - href: labs/lab2/assignment2_template.qmd
+            text: "Lab 2: Healthcare Access and Equity in Pennsylvania"
+          - href: labs/lab4/Assignment4_Instructions.md
+            text: "Lab 4: Spatial Predictive Analysis"
+          - href: labs/lab5/Lab_5_Instructions.md
+            text: "Lab 5: Space-Time Prediction"
+          - href: "https://musa-5080-fall-2025.github.io/MUSA-5080-Fall-2025/labs/midterm/Midterm_2025.html"
+            text: "Mid Term instructions"
+            target: _blank
+          - href: "https://musa-5080-fall-2025.github.io/MUSA-5080-Fall-2025/labs/final/final_project_instructions.html"
+            text: "Final instructions"
+            target: _blank
       - text: "Assignments"
         menu:
           - href: Assignments/Assignment_1/Assignment_1.qmd
