@@ -250,7 +250,7 @@ kable(top_stations,
 
 ## Load Philadelphia Census Data
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+```{r load-data, echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
 # Get Philadelphia census tracts
 philly_census <- get_acs(
   geography = "tract",
@@ -285,6 +285,11 @@ philly_census <- get_acs(
 # Check the data
 glimpse(philly_census)
 ```
+
+```{r show-results}
+philly_census
+```
+
 
 ## Map Philadelphia Context
 
