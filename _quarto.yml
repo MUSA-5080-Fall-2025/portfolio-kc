@@ -40,21 +40,24 @@ website:
             text: "Assignment 1: Census Data Exploration"
           - href: Assignments/Assignment_2/Yu_Xiao_Assignment2.qmd
             text: "Assignment 2: Spatial Analysis and Visualization"
-          - href: Assignments/Midterm/Yu_Xiao_Appendix.qmd
-            text: "Midterm: Philadelphia Housing"
-          - href: Assignments/Midterm/final_slides.qmd
-            text: "Midterm Slides"
           - href: Assignments/Assignment_4/Yu_Xiao_Assignment4.qmd
             text: "Assignment 4: Spatial Predictive Analysis of Burglaries in Chicago"
           - href: Assignments/Assignment_5/Yu_Zheng_Assignment5.qmd
             text: "Assignment 5: Space-Time Prediction of Bike Share Demand: Philadelphia Indego"
+            
+      - text: "Midterm"
+        menu:
+          - href: Assignments/Midterm/Yu_Xiao_Appendix.qmd
+            text: "Appendix: Philadelphia Housing"
+          - href: Assignments/Midterm/final_slides.qmd
+            text: "Slides"
+            
+      - text: "Final"
+        menu:
           - href: Assignments/Final/1.qmd
-            text: "Final Challenge"
+            text: "Appendix"
           - href: Assignments/Final/fslides.qmd
-            text: "Final Slides"
-            
-            
-   
+            text: "Slides"
             
 format:
   html:
