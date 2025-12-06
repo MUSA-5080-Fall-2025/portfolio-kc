@@ -27,7 +27,7 @@ website:
 
       - text: "Labs"
         menu:
-          - href: labs/lab_0/script
+          - href: labs/lab1/week-03/script/lab0_template.qmd
             text: "Lab 0: dplyr Basics"
           - href: labs/lab1/week-03/script/week3_lab_exercise.qmd
             text: "Lab 1"
@@ -38,7 +38,7 @@ website:
             text: "Assignment 1: Census Data Exploration"
           - href: Assignments/Assignment_2/Yu_Xiao_Assignment2.qmd
             text: "Assignment 2: Spatial Analysis and Visualization"
-          - href: Assignments/Midterm/MUSA508MidtermGroup/final_Appendix/Yu_Xiao_Appendix.qmd
+          - href: Assignments/Yu_Xiao_Appendix.qmd
             text: "Midterm"
           - href: Assignments/Assignment_5/Yu_Zheng_Assignment5.qmd
             text: "Assignment 5"
