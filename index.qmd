@@ -15,7 +15,7 @@ Advanced spatial analysis and data science for urban planning and public policy.
 - **Final Project:** Capstone modeling challenge
 
 ## About Me
-- My name is Xiao Yu, and you may call me Cathy. I am currently a Master of Urban Spatial Analytics student at the University of Pennsylvania. I completed my undergraduate degree in Urban Studies and Planning at the University of Sheffield, where I developed a strong interest in spatial analysis and urban design.
+- My name is Xiao Yu. I completed my undergraduate degree in Urban Studies and Planning at the University of Sheffield, where I developed a strong interest in spatial analysis and urban design.
 
 ## Contact
 - Email: [uxiaoo22@upenn.edu]
