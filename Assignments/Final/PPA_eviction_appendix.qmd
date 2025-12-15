@@ -666,7 +666,7 @@ This code block reloads our tracts.
 #| warning: false
 #| message: false
 #| echo: false
-philly_tracts_2 <- st_read("/Users/cathy/GitHub/portfolio-setup-uxiaoo22/Assignments/Final/ppa_final/copy_github2/data/tl_2020_42_tract/tl_2020_42_tract.shp")
+philly_tracts_2 <- st_read("/Users/cathy/GitHub/portfolio-setup-uxiaoo22/Assignments/Final/data/tl_2020_42_tract/tl_2020_42_tract.shp")
 
 
 df <- read_csv("data/final_panel_no_geometry.csv")
