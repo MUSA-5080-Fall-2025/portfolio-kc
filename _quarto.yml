@@ -68,7 +68,7 @@ website:
             text: "Slides"
       - text: "Final"
         menu:
-          - href: Assignments/Final/ppa_final/final_template_new.qmd
+          - href: Assignments/Final/PPA_eviction_appendix.qmd
             text: "Appendix"
           - href: Assignments/Final/fslides.qmd
             text: "Slides"
