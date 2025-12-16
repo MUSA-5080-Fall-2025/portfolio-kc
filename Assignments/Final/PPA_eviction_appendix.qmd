@@ -97,8 +97,11 @@ mapTheme <- ggplot2::theme(
 
 ## Census Tracks
 
-```{r census_tract}
-
+```{r setup, include=FALSE}
+options(
+  tigris_use_cache = TRUE,
+  tigris_progress = FALSE
+)
 #| warning: false
 #| message: false
 #| echo: false
