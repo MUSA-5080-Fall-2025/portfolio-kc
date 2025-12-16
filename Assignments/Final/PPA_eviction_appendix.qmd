@@ -6,7 +6,7 @@ date: "2025-12-01"
 
 format:
   html:
-    theme: yeti
+    theme: cosmo
     highlight-style: tango
     toc: true
     toc-location: left
